@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminLTE 4 - Quản lý Sinh Viên</title>
+    <!-- AdminLTE 4 & Bootstrap 5 & Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-beta2/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css">
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="app-wrapper">
+    
+    <!-- Header / Navbar -->
+    <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-lte-toggle="sidebar" href="#"><i class="bi bi-list"></i></a>
+                </li>
+                <li class="nav-item d-none d-md-block"><a href="#" class="nav-link fw-bold">Hệ Thống Quản Lý Sinh Viên</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+            <a href="#" class="brand-link"><span class="brand-text fw-light">STUDENT ADMIN</span></a>
+        </div>
+        <div class="sidebar-wrapper">
+            <nav class="mt-2">
+                <ul class="nav sidebar-menu flex-column">
+                    <li class="nav-item">
+                        <a href="/admin/students" class="nav-link active">
+                            <i class="nav-icon bi bi-people-fill"></i>
+                            <p>Danh Sách Sinh Viên</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main p-3">
+        <div class="app-content-header">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-sm-6"><h3 class="mb-0">Quản Lý Sinh Viên</h3></div>
+                    <div class="col-sm-6 text-end">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#studentModal" onclick="resetForm()">
+                            <i class="bi bi-person-plus-fill"></i> Thêm Sinh Viên Mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-content mt-3">
+            <div class="container-fluid">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="searchAdmin" class="form-control" placeholder="Tìm kiếm theo Mã SV, Họ tên, Email, SĐT..." onkeyup="fetchStudents()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped table-hover align-middle mb-0">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã SV</th>
+                                    <th>Full Name</th>
+                                    <th>Gmail</th>
+                                    <th>Số Điện Thoại</th>
+                                    <th>Class Name</th>
+                                    <th class="text-center">Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal Form Thêm / Sửa Sinh Viên -->
+<div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalTitle">Thêm Sinh Viên Mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="adminForm">
+                    <input type="hidden" id="adminStudentId">
+                    
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Mã Sinh Viên (VD: SV004)</label>
+                        <input type="text" id="adminStudentCode" class="form-control" placeholder="Nhập Mã SV" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Full Name (Họ tên)</label>
+                        <input type="text" id="adminFullName" class="form-control" placeholder="Nhập Họ và tên" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Gmail</label>
+                        <input type="email" id="adminEmail" class="form-control" placeholder="Nhập Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Số Điện Thoại</label>
+                        <input type="text" id="adminPhone" class="form-control" placeholder="Nhập số điện thoại" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Class Name (Lớp)</label>
+                        <input type="text" id="adminClassName" class="form-control" placeholder="Nhập tên lớp" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100 fw-bold" id="btnSaveAdmin">Lưu Thông Tin</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-beta2/dist/js/adminlte.min.js"></script>
+<script>
+    const API = '/api/students';
+    const modalElement = document.getElementById('studentModal');
+    const modal = new bootstrap.Modal(modalElement);
+
+    document.addEventListener('DOMContentLoaded', fetchStudents);
+
+    // Lấy danh sách sinh viên từ API
+    function fetchStudents() {
+        const kw = document.getElementById('searchAdmin').value;
+        const url = kw ? `${API}?keyword=${encodeURIComponent(kw)}` : API;
+
+        fetch(url)
+            .then(res => {
+                if(!res.ok) throw new Error("Không tải được dữ liệu từ API");
+                return res.json();
+            })
+            .then(data => {
+                const body = document.getElementById('adminTableBody');
+                body.innerHTML = '';
+
+                if (data.length === 0) {
+                    body.innerHTML = '<tr><td colspan="7" class="text-center py-3 text-muted">Không tìm thấy sinh viên nào.</td></tr>';
+                    return;
+                }
+
+                data.forEach((st, i) => {
+                    body.innerHTML += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td><span class="badge bg-primary fs-6">${st.studentCode || ''}</span></td>
+                            <td class="fw-bold">${st.fullName || ''}</td>
+                            <td>${st.email || ''}</td>
+                            <td>${st.phone || ''}</td>
+                            <td><span class="badge bg-secondary">${st.className || ''}</span></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-warning me-1" onclick="editStudent('${st.id}')">
+                                    <i class="bi bi-pencil-square"></i> Sửa
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="removeStudent('${st.id}')">
+                                    <i class="bi bi-trash-fill"></i> Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(err => console.error("Lỗi:", err));
+    }
+
+    // Reset Form về trạng thái thêm mới
+    function resetForm() {
+        document.getElementById('adminStudentId').value = '';
+        document.getElementById('adminForm').reset();
+        document.getElementById('modalTitle').innerText = 'Thêm Sinh Viên Mới';
+        document.getElementById('btnSaveAdmin').innerText = 'Lưu Thông Tin';
+    }
+
+    // Load dữ liệu lên Modal khi nhấn Sửa
+    function editStudent(id) {
+        fetch(`${API}/${id}`)
+            .then(res => res.json())
+            .then(st => {
+                document.getElementById('adminStudentId').value = st.id;
+                document.getElementById('adminStudentCode').value = st.studentCode || '';
+                document.getElementById('adminFullName').value = st.fullName || '';
+                document.getElementById('adminEmail').value = st.email || '';
+                document.getElementById('adminPhone').value = st.phone || '';
+                document.getElementById('adminClassName').value = st.className || '';
+                
+                document.getElementById('modalTitle').innerText = 'Cập Nhật Thông Tin Sinh Viên';
+                document.getElementById('btnSaveAdmin').innerText = 'Cập Nhật';
+                modal.show();
+            })
+            .catch(err => alert("Không tìm thấy thông tin sinh viên"));
+    }
+
+    // Xử lý Thêm mới hoặc Cập nhật sinh viên
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('adminStudentId').value;
+        
+        const payload = {
+            studentCode: document.getElementById('adminStudentCode').value,
+            fullName: document.getElementById('adminFullName').value,
+            email: document.getElementById('adminEmail').value,
+            phone: document.getElementById('adminPhone').value,
+            className: document.getElementById('adminClassName').value
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API}/${id}` : API;
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Lỗi lưu dữ liệu");
+            return res.json();
+        })
+        .then(() => {
+            modal.hide();
+            resetForm();
+            fetchStudents(); // Cập nhật lại danh sách sau khi lưu
+        })
+        .catch(err => {
+            alert("Có lỗi xảy ra khi lưu thông tin sinh viên!");
+            console.error(err);
+        });
+    });
+
+    // Xóa sinh viên
+    function removeStudent(id) {
+        if (confirm('Bạn có chắc chắn muốn xóa sinh viên này?')) {
+            fetch(`${API}/${id}`, { method: 'DELETE' })
+                .then(res => {
+                    if (!res.ok) throw new Error("Lỗi khi xóa");
+                    fetchStudents();
+                })
+                .catch(err => alert("Không thể xóa sinh viên!"));
+        }
+    }
+</script>
+</body>
+</html>
